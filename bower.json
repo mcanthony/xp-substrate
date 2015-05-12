@@ -1,0 +1,21 @@
+{
+  "name": "xp-substrate",
+  "version": "0.0.0",
+  "description": "Substrate experiment",
+  "license": "MIT",
+  "main": "src/xp-substrate.html",
+  "keywords": [
+    "web-components",
+    "experiment",
+    "substrate"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "webcomponentsjs": "^0.5.1",
+    "dlib": "dmmn/dlib"
+  }
+}

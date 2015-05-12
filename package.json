@@ -1,0 +1,31 @@
+{
+  "name": "xp-substrate",
+  "version": "1.0.0",
+  "description": "> Substrate experiment",
+  "main": "index.js",
+  "scripts": {
+    "serve": "gulp serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://dmmn@github.com/dmmn/xp-substrate.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dmmn/xp-substrate/issues"
+  },
+  "homepage": "https://github.com/dmmn/xp-substrate",
+  "devDependencies": {
+    "babelify": "^6.1.0",
+    "browser-sync": "^2.7.1",
+    "browserify": "^10.1.3",
+    "gulp": "^3.8.11",
+    "gulp-sourcemaps": "^1.5.2",
+    "gulp-util": "^3.0.4",
+    "mkdirp": "^0.5.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.2.1"
+  }
+}
