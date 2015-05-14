@@ -4,7 +4,7 @@
   "description": "> Substrate experiment",
   "main": "index.js",
   "scripts": {
-    "serve": "gulp serve"
+    "start": "gulp serve"
   },
   "repository": {
     "type": "git",
