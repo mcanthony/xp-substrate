@@ -12,7 +12,6 @@ var browserSync = require('browser-sync');
 var reload = browserSync.reload;
 
 gulp.task("scripts", function () {
-  console.log(require.resolve("babelify/polyfill"));
   var options = {
     cache: watchify.args.cache,
     packageCache: watchify.args.packageCache,
@@ -24,7 +23,9 @@ gulp.task("scripts", function () {
   };
 
   var bundler = watchify(browserify(options));
-  bundler.transform(babelify);
+  bundler.transform(babelify.configure({
+    loose: "all"
+  }));
 
   function bundle() {
     return bundler.bundle()
