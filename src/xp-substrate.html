@@ -11,9 +11,13 @@
       width: 100%;
       height: 100%;
     }
+    canvas#debug {
+      opacity: 0;
+    }
   </style>
-  <canvas id="ground"></canvas>
-  <canvas id="roofs"></canvas>
+  <canvas id="main"></canvas>
   <canvas id="debug"></canvas>
 </template>
+<script src="../bower_components/threejs/build/three.js"></script>
+<script src="../bower_components/threejs/examples/js/controls/TrackballControls.js"></script>
 <script src="scripts/main.js"></script>

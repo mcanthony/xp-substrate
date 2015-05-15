@@ -16,6 +16,7 @@
   ],
   "dependencies": {
     "webcomponentsjs": "^0.5.1",
-    "dlib": "dmmn/dlib"
+    "dlib": "dmmn/dlib",
+    "threejs": "*"
   }
 }

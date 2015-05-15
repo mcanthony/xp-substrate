@@ -2,36 +2,32 @@ import LoopElement from "../../bower_components/dlib/dom/LoopElement";
 import SubstrateSystem from "../../bower_components/dlib/substrate/SubstrateSystem";
 import SubstrateDebugRenderer from "../../bower_components/dlib/substrate/SubstrateDebugRenderer";
 import Edge from "../../bower_components/dlib/math/Edge";
+import Polygon from "../../bower_components/dlib/math/Polygon";
+import ViewThree from "./ViewThree";
 
 class XPSubstrateElement extends LoopElement {
 
   createdCallback() {
     super.createdCallback();
 
-
-    this.canvas = this.shadowRoot.querySelector("canvas#roofs");
+    this.canvas = this.shadowRoot.querySelector("canvas#main");
     this.canvas.width = this.offsetWidth;
     this.canvas.height = this.offsetHeight;
-    this.context = this.canvas.getContext("2d");
-
-    this.canvasGround = this.shadowRoot.querySelector("canvas#ground");
-    this.canvasGround.width = this.canvas.width;
-    this.canvasGround.height = this.canvas.height;
-    this.contextGround = this.canvasGround.getContext("2d");
-
-    this.buildings = [];
+    // this.context = this.canvas.getContext("2d");
 
     this.substrateSystem = new SubstrateSystem(this.canvas.width, this.canvas.height, {
       speed: 4,
-      // spawnProbabilityRatio: 0
-      spawnProbabilityRatio: 0.01
+      spawnProbabilityRatio: 0.05
     });
 
+    this.canvasDebug = this.shadowRoot.querySelector("canvas#debug");
     this.substrateDebugRenderer = new SubstrateDebugRenderer(this.substrateSystem, {
-      canvas: this.shadowRoot.querySelector("canvas#debug"),
       // edgesDebug: true,
-      // polygonsDebug: true
+      // polygonsDebug: true,
+      canvas: this.canvasDebug
     });
+
+    this.view = new ViewThree(this.canvas, this.canvasDebug);
 
     this.pointerEdge = new Edge();
 
@@ -44,6 +40,17 @@ class XPSubstrateElement extends LoopElement {
     this.addEventListener("mousedown", this);
     this.addEventListener("mouseup", this);
     this.addEventListener("mousemove", this);
+  }
+
+  polygonAdded(polygon) {
+    let offsetWidth = this.substrateSystem.width * .5;
+    let offsetHeight = this.substrateSystem.height * .5;
+    let newPolygon = new Polygon().copy(polygon);
+    for (let vertex of newPolygon.vertices) {
+      vertex.x -= offsetWidth;
+      vertex.y -= offsetHeight;
+    }
+    this.view.addPolygon(newPolygon);
   }
 
   handleEvent(e) {
@@ -64,43 +71,12 @@ class XPSubstrateElement extends LoopElement {
     }
   }
 
-  polygonAdded(polygon) {
-    // if(polygon.vertices.length > 4) {
-    //   return;
-    // }
-    let building = {
-      polygon: polygon,
-      color: `hsl(${360 * Math.random()}, 100%, 80%)`,
-      height: Math.random()
-    };
-    this.buildings.push(building);
-    this.drawBuilding(building, this.contextGround);
-  }
-
-  drawBuilding(building, context) {
-    context.fillStyle = building.color;
-    context.beginPath();
-    let vertex = building.polygon.vertices[0];
-    context.moveTo(vertex.x, vertex.y);
-    for (let i = 1; i < building.polygon.vertices.length; i++) {
-      vertex = building.polygon.vertices[i];
-      context.lineTo(vertex.x, vertex.y);
-    }
-    context.fill();
-  }
-
   update() {
     super.update();
     this.substrateSystem.update();
+    this.substrateDebugRenderer.update();
 
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    for (let building of this.buildings) {
-      this.context.save();
-      this.context.translate(this.pointerEdge.b.x * 20 * building.height, this.pointerEdge.b.y * 20 * building.height);
-      this.drawBuilding(building, this.context);
-      this.context.restore();
-    }
-    // this.substrateDebugRenderer.update();
+    this.view.update();
   }
 }
 
