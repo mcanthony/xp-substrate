@@ -1,4 +1,4 @@
-let THREE = window.THREE;
+import THREE from "THREE";
 
 export default class ViewThree {
   constructor(canvas, canvasDebug) {
@@ -42,7 +42,7 @@ export default class ViewThree {
     this.renderer = new THREE.WebGLRenderer({
       canvas: canvas
     });
-    this.renderer.setClearColor(0xeeeeee, 1);
+    this.renderer.setClearColor(0x000000, 1);
     this.renderer.setSize( window.innerWidth, window.innerHeight );
   }
   addPolygon(polygon) {

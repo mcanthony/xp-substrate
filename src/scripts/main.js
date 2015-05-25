@@ -1,8 +1,8 @@
-import LoopElement from "../../bower_components/dlib/dom/LoopElement";
-import SubstrateSystem from "../../bower_components/dlib/substrate/SubstrateSystem";
-import SubstrateDebugRenderer from "../../bower_components/dlib/substrate/SubstrateDebugRenderer";
-import Edge from "../../bower_components/dlib/math/Edge";
-import Polygon from "../../bower_components/dlib/math/Polygon";
+import LoopElement from "dlib/dom/LoopElement";
+import SubstrateSystem from "dlib/substrate/SubstrateSystem";
+import SubstrateDebugRenderer from "dlib/substrate/SubstrateDebugRenderer";
+import Edge from "dlib/math/Edge";
+import Polygon from "dlib/math/Polygon";
 import ViewThree from "./ViewThree";
 
 class XPSubstrateElement extends LoopElement {
