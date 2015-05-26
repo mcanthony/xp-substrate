@@ -1,9 +1,13 @@
+const glslify = require("glslify");
+
 import LoopElement from "dlib/dom/LoopElement";
 import SubstrateSystem from "dlib/substrate/SubstrateSystem";
 import SubstrateDebugRenderer from "dlib/substrate/SubstrateDebugRenderer";
 import Edge from "dlib/math/Edge";
 import Polygon from "dlib/math/Polygon";
+
 import ViewThree from "./ViewThree";
+import ViewGLSL from "./ViewGLSL";
 
 class XPSubstrateElement extends LoopElement {
 
@@ -13,7 +17,6 @@ class XPSubstrateElement extends LoopElement {
     this.canvas = this.shadowRoot.querySelector("canvas#main");
     this.canvas.width = this.offsetWidth;
     this.canvas.height = this.offsetHeight;
-    // this.context = this.canvas.getContext("2d");
 
     this.substrateSystem = new SubstrateSystem(this.canvas.width, this.canvas.height, {
       speed: 4,
@@ -27,11 +30,12 @@ class XPSubstrateElement extends LoopElement {
       canvas: this.canvasDebug
     });
 
-    this.view = new ViewThree(this.canvas, this.canvasDebug);
-
-    this.pointerEdge = new Edge();
+    // this.view = new ViewThree(this.canvas, this.canvasDebug);
+    this.view = new ViewGLSL(this.canvas, glslify("./shaders/world.glsl"), this.canvasBuildings);
 
     this.substrateSystem.polygonAddedCallback = this.polygonAdded.bind(this);
+
+    this.pointerEdge = new Edge();
 
     this.update();
 

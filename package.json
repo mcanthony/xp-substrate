@@ -4,7 +4,7 @@
   "description": "> Substrate experiment",
   "main": "index.js",
   "scripts": {
-    "start": "dbuild build --serverDir=./"
+    "start": "dbuild serve --serverDir=./"
   },
   "repository": {
     "type": "git",
@@ -28,6 +28,9 @@
       "debowerify",
       "glslify"
     ]
+  },
+  "babelify": {
+    "loose": "all"
   },
   "browserify-shim": {
     "THREE": "global:THREE"
