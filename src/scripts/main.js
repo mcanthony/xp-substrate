@@ -18,7 +18,7 @@ class XPSubstrateElement extends LoopElement {
     this.canvas.width = this.offsetWidth;
     this.canvas.height = this.offsetHeight;
 
-    this.substrateSystem = new SubstrateSystem(this.canvas.width, this.canvas.height, {
+    this.substrateSystem = new SubstrateSystem(1024, 1024, {
       speed: 4,
       spawnProbabilityRatio: 0.05
     });
@@ -31,15 +31,13 @@ class XPSubstrateElement extends LoopElement {
     });
 
     // this.view = new ViewThree(this.canvas, this.canvasDebug);
-    this.view = new ViewGLSL(this.canvas, glslify("./shaders/world.glsl"), this.canvasBuildings);
+    this.view = new ViewGLSL(this.canvas, this.substrateSystem, glslify("./shaders/world.glsl"));
 
     this.substrateSystem.polygonAddedCallback = this.polygonAdded.bind(this);
 
     this.pointerEdge = new Edge();
 
     this.update();
-
-    this.substrateSystem.spawnEdge(this.canvas.width * 0.5, this.canvas.height * 0.5, Math.PI * .5);
 
     this.addEventListener("mousedown", this);
     this.addEventListener("mouseup", this);
@@ -58,7 +56,6 @@ class XPSubstrateElement extends LoopElement {
   }
 
   handleEvent(e) {
-    super.handleEvent(e);
     switch (e.type) {
       case "mousedown":
         this.pointerEdge.a.set(e.clientX, e.clientY);
@@ -66,7 +63,6 @@ class XPSubstrateElement extends LoopElement {
       case "mousemove":
         this.pointerEdge.a.copy(this.pointerEdge.b);
         this.pointerEdge.b.set(e.clientX / this.offsetWidth, e.clientY / this.offsetHeight).multiplyScalar(2).addScalar(-1);
-        // console.log(this.pointerEdge.b);
         break;
       case "mouseup":
         this.pointerEdge.b.set(e.clientX, e.clientY);

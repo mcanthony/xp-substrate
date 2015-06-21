@@ -20,6 +20,7 @@ struct Voxel
 
 // UNIFORMS
 
+uniform float uTime;
 uniform vec2 uResolution;
 uniform sampler2D uTexture;
 uniform Camera uCamera;
@@ -69,48 +70,35 @@ Voxel min( Voxel voxel1, Voxel voxel2 )
 
 Voxel ground( vec3 p) {
 
-  vec4 color = vec4(0., 0., 1., 1.);
+  vec2 uv = fract(p.xz / 1024.0 + .5);
+  vec4 texture = texture2D(uTexture, uv);
 
-  float scale = 1000.;
+  float displacement = pow(texture.a, 1.);
 
-  vec4 texture = texture2D(uTexture, fract(p.xz / uResolution));
+  float scale = 40.;
 
-  vec3 q = p;
+  p.xz = mod(p.xz, 1.) - 0.5 * 1.;
+  p.y += displacement * .5 * scale;
+  float dist = udBox(p, vec3(.5, displacement * scale, .5));
 
-  float displacement = texture.r * 5.;
-  // q.y = displacement * 20.;
 
-  q.xz = mod(p.xz, 1.) - 0.5 * 1.;
-  float dist = udBox(q, vec3(.5, displacement * 5., .5));
-  // texture = texture + texture2D(uTexture, fract(p.xz + vec2(1., 0.) / scale)) / 2.;
-  // vec4 texture = texture2D(uTexture, fract(p.xz + vec2(1., 0.) / scale));
-
-  // float displacement = floor(.5 + texture.a);
-  //
-  // p.y += pow(displacement * 2., 5.);
-  // p.y += displacement;
-
-  // float dist = p.y;
-
-  color = vec4(1.);
-
-  // color = vec4(vec3(displacement), 1.0);
+  vec4 color = vec4(vec3(p.y / scale), 1.0);
 
   return Voxel(dist, color);
 }
 
 Voxel map( vec3 p) {
 
-  // Voxel voxel = Voxel(sdSphere(p, 10.), vec4(1., 0., 0., 1.));
-  Voxel voxel = ground(p);
+  Voxel voxel = Voxel(uCamera.far, vec4(1.));
 
-  // voxel = smin(Voxel(sdSphere(p, 10.), vec4(1., 0., 0., 1.)), voxel, .5);
+  voxel = min(voxel, ground(p));
+
 
   return voxel;
 }
 
 vec3 calcNormal ( vec3 p ) {
-  vec2 e = vec2(1., 0.0);
+  vec2 e = vec2(.0001, 0.0);
   return normalize(vec3(
     map(p + e.xyy).dist - map(p - e.xyy).dist,
     map(p + e.yxy).dist - map(p - e.yxy).dist,
@@ -125,7 +113,7 @@ Voxel rayMarch( vec3 rayOrigin, vec3 rayDirection)
   float rayMarchingStep = 0.0001;
   float dist = uCamera.near;
 
-  for(int i = 0; i < 32; i++) {
+  for(int i = 0; i < 16; i++) {
     if (rayMarchingStep < 0.0001 || rayMarchingStep > uCamera.far) break;
     voxel = map( rayOrigin + rayDirection * dist );
     rayMarchingStep = voxel.dist;
@@ -133,10 +121,8 @@ Voxel rayMarch( vec3 rayOrigin, vec3 rayDirection)
     voxel.dist = dist;
   }
 
-  if (dist < uCamera.far) {
-    vec3 normal = calcNormal(rayOrigin + rayDirection * dist);
-    voxel.color *= dot(normal, normalize(vec3(1., 1., 1.))) * 1. * vec4(1., 1., 1., 1.);
-  }
+  vec3 normal = calcNormal(rayOrigin + rayDirection * dist);
+  // voxel.color *= 1. + dot(normal, normalize(vec3(cos(uTime * 100.), cos(uTime * 100.), sin(uTime * 100.))));
 
   return voxel;
 }
