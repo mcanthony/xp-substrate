@@ -7,18 +7,27 @@ export default class ViewGLSL extends GLSLView{
   constructor (canvas, substrateSystem, fragmentShaderStr) {
     super(canvas, fragmentShaderStr);
 
+    this.substrateSystem = substrateSystem;
+
     this.pointer = Pointer.get(this.canvas);
 
     this.textureCanvas = document.createElement("canvas");
-    this.textureCanvas.width = substrateSystem.width;
-    this.textureCanvas.height = substrateSystem.height;
+    this.textureCanvas.width = this.substrateSystem.width;
+    this.textureCanvas.height = this.substrateSystem.height;
     this.textureContext = this.textureCanvas.getContext("2d");
-    this.textureContext.fillStyle = "rgba(255, 255, 255, 0.01)";
+    this.textureContext.fillStyle = "black";
     this.textureContext.fillRect(0, 0, this.textureCanvas.width, this.textureCanvas.height);
 
-    this.textureCanvas.style.position = "absolute";
-    this.textureCanvas.style.top = "0px";
-    // document.body.appendChild(this.textureCanvas);
+    this.textureBufferCanvas = document.createElement("canvas");
+    this.textureBufferCanvas.width = this.textureCanvas.width;
+    this.textureBufferCanvas.height = this.textureCanvas.height;
+    this.textureBufferContext = this.textureBufferCanvas.getContext("2d");
+    this.textureBufferContext.fillStyle = "black";
+    this.textureBufferContext.fillRect(0, 0, this.textureBufferCanvas.width, this.textureBufferCanvas.height);
+
+    this.textureBufferCanvas.style.position = "absolute";
+    this.textureBufferCanvas.style.top = "0px";
+    // document.body.appendChild(this.textureBufferCanvas);
 
     this.camera = new THREE.PerspectiveCamera( 45, this.canvas.width / this.canvas.height, 1, 2000 );
     this.camera.position.set(0, 200, 0);
@@ -44,29 +53,49 @@ export default class ViewGLSL extends GLSLView{
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
-    substrateSystem.spawnEdge(substrateSystem.width * 0.5, substrateSystem.height * 0.5, Math.PI * .5);
+    setInterval(this.spawnEdge.bind(this), 12000);
+
+    this.spawnEdge();
   }
 
-  addPolygon (polygon) {
-    this.textureContext.fillStyle = `hsla(${Math.random() * 360}, 100%, 50%, ${Math.random()})`;
+  spawnEdge() {
+    this.textureBufferGlobalAplpha = .9;
+    setTimeout(() => {
+      this.textureBufferGlobalAplpha = 0;
+      this.substrateSystem.clear();
+      this.substrateSystem.spawnEdge(this.substrateSystem.width * 0.5, this.substrateSystem.height * 0.5, Math.PI * .5);
+    }, 2000);
+  }
+
+  addPolygon(polygon) {
+    // this.textureBufferContext.fillStyle = `hsla(${Math.random() * 360}, 100%, 50%, ${Math.random()})`;
+    this.textureBufferContext.fillStyle = `rgb(${Math.floor(Math.random() * 256)}, 0, 0)`;
     let offsetX = this.textureCanvas.width * .5;
     let offsetY = this.textureCanvas.height * .5;
     let lastVertex = polygon.vertices[polygon.vertices.length - 1];
-    this.textureContext.beginPath();
-    this.textureContext.moveTo(lastVertex.x + offsetX, lastVertex.y + offsetY);
+    this.textureBufferContext.beginPath();
+    this.textureBufferContext.moveTo(lastVertex.x + offsetX, lastVertex.y + offsetY);
     for (let vertex of polygon.vertices) {
-      this.textureContext.lineTo(vertex.x + offsetX, vertex.y + offsetY);
+      this.textureBufferContext.lineTo(vertex.x + offsetX, vertex.y + offsetY);
     }
-    this.textureContext.fill();
+    this.textureBufferContext.fill();
   }
 
   update () {
+    this.textureBufferContext.globalAlpha = this.textureBufferGlobalAplpha;
+    this.textureBufferContext.fillStyle = "rgba(0, 0, 0, 1)";
+    this.textureBufferContext.fillRect(0, 0, this.textureBufferCanvas.width, this.textureBufferCanvas.height);
+    this.textureBufferContext.globalAlpha = 1;
+
+    this.textureContext.globalAlpha = .1;
+    this.textureContext.drawImage(this.textureBufferCanvas, 0, 0);
+
     let gl = this.gl;
 
     this.time += 0.001;
 
-    this.camera.position.z += (this.pointer.normalized.y * 2 - 1) * 10;
-    this.camera.position.x += (this.pointer.normalized.x * 2 - 1) * 10;
+    this.camera.position.z -= (1 - this.pointer.normalized.y) * 10;
+    // this.camera.position.x += (this.pointer.normalized.x * 2 - 1) * 10;
 
     this.camera.updateMatrixWorld();
     this.camera.matrixWorldInverse.getInverse( this.camera.matrixWorld );

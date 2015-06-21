@@ -73,7 +73,7 @@ Voxel ground( vec3 p) {
   vec2 uv = fract(p.xz / 1024.0 + .5);
   vec4 texture = texture2D(uTexture, uv);
 
-  float displacement = pow(texture.a, 1.);
+  float displacement = pow(texture.r, 1.);
 
   float scale = 40.;
 
