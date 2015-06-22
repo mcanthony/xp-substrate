@@ -25,9 +25,9 @@ export default class ViewGLSL extends GLSLView{
     this.textureBufferContext.fillStyle = "black";
     this.textureBufferContext.fillRect(0, 0, this.textureBufferCanvas.width, this.textureBufferCanvas.height);
 
-    this.textureBufferCanvas.style.position = "absolute";
-    this.textureBufferCanvas.style.top = "0px";
-    // document.body.appendChild(this.textureBufferCanvas);
+    this.textureCanvas.style.position = "absolute";
+    this.textureCanvas.style.top = "0px";
+    // document.body.appendChild(this.textureCanvas);
 
     this.camera = new THREE.PerspectiveCamera( 45, this.canvas.width / this.canvas.height, 1, 2000 );
     this.camera.position.set(0, 200, 0);
@@ -68,6 +68,10 @@ export default class ViewGLSL extends GLSLView{
   }
 
   addPolygon(polygon) {
+    if(Math.random() < .1) {
+      return;
+    }
+
     // this.textureBufferContext.fillStyle = `hsla(${Math.random() * 360}, 100%, 50%, ${Math.random()})`;
     this.textureBufferContext.fillStyle = `rgb(${Math.floor(Math.random() * 256)}, 0, 0)`;
     let offsetX = this.textureCanvas.width * .5;
@@ -95,7 +99,7 @@ export default class ViewGLSL extends GLSLView{
     this.time += 0.001;
 
     this.camera.position.z -= (1 - this.pointer.normalized.y) * 10;
-    // this.camera.position.x += (this.pointer.normalized.x * 2 - 1) * 10;
+    this.camera.position.x += (this.pointer.normalized.x * 2 - 1) * 10;
 
     this.camera.updateMatrixWorld();
     this.camera.matrixWorldInverse.getInverse( this.camera.matrixWorld );
