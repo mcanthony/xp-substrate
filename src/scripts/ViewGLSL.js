@@ -11,6 +11,8 @@ export default class ViewGLSL extends GLSLView{
 
     this.pointer = Pointer.get(this.canvas);
 
+    this.pointer.normalized.set(.5, 0);
+
     this.textureCanvas = document.createElement("canvas");
     this.textureCanvas.width = this.substrateSystem.width;
     this.textureCanvas.height = this.substrateSystem.height;
