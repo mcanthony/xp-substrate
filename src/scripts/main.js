@@ -74,7 +74,7 @@ class XPSubstrateElement extends LoopElement {
   update() {
     super.update();
     this.substrateSystem.update();
-    this.substrateDebugRenderer.update();
+    // this.substrateDebugRenderer.update();
 
     this.view.update();
   }
