@@ -68,31 +68,31 @@ Voxel min( Voxel voxel1, Voxel voxel2 )
 
 // MAIN
 
-Voxel ground( vec3 p) {
+float scale = 40.;
 
+float height(vec3 p) {
   vec2 uv = fract(p.xz / 1024.0 + .5);
   vec4 texture = texture2D(uTexture, uv);
+  return pow(texture.r, 1.) * scale;
+}
 
-  float displacement = pow(texture.r, 1.);
-
-  float scale = 40.;
+Voxel ground(vec3 p) {
+  float displacement = height(p);
 
   p.xz = mod(p.xz, 1.) - 0.5 * 1.;
-  p.y += displacement * .5 * scale;
-  float dist = udBox(p, vec3(.5, displacement * scale, .5));
-
+  p.y += displacement * .5;
+  float dist = udBox(p, vec3(.5, displacement, .5));
 
   vec4 color = vec4(vec3(p.y / scale), 1.0);
 
   return Voxel(dist, color);
 }
 
-Voxel map( vec3 p) {
+Voxel map(vec3 p) {
 
   Voxel voxel = Voxel(uCamera.far, vec4(1.));
 
   voxel = min(voxel, ground(p));
-
 
   return voxel;
 }
@@ -106,16 +106,16 @@ vec3 calcNormal ( vec3 p ) {
   ));
 }
 
-Voxel rayMarch( vec3 rayOrigin, vec3 rayDirection)
+Voxel rayMarch(vec3 rayOrigin, vec3 rayDirection)
 {
   Voxel voxel = Voxel(uCamera.far, vec4(0.0));
 
-  float rayMarchingStep = 0.0001;
+  float rayMarchingStep = 0.001;
   float dist = uCamera.near;
 
   for(int i = 0; i < 16; i++) {
-    if (rayMarchingStep < 0.0001 || rayMarchingStep > uCamera.far) break;
-    voxel = map( rayOrigin + rayDirection * dist );
+    if (rayMarchingStep < 0.001 || rayMarchingStep > uCamera.far) break;
+    voxel = map(rayOrigin + rayDirection * dist);
     rayMarchingStep = voxel.dist;
     dist += rayMarchingStep;
     voxel.dist = dist;
@@ -126,6 +126,95 @@ Voxel rayMarch( vec3 rayOrigin, vec3 rayDirection)
 
   return voxel;
 }
+
+Voxel rayMarchTerrain(vec3 rayOrigin, vec3 rayDirection)
+{
+  Voxel voxel = Voxel(uCamera.far, vec4(0.0));
+
+  float lastHeight = 0.;
+  float lastY = 0.;
+
+  float dist = 0.;
+
+  const float steps = 200.;
+  float step = uCamera.far / steps;
+
+  for(float i = 0.; i < steps; i++) {
+
+    dist += step;
+
+    vec3 p = rayOrigin + rayDirection * dist;
+    float height = height(p);
+
+    if(p.y < height) {
+        // interpolate the intersection distance
+        // resT = t - dt + dt * (lastHeight - lastY) / (p.y - lastY - h + lastHeight);
+        voxel.color = vec4(vec3(p.y / scale), 1.0);
+        break;
+    }
+
+    // step = 0.01 * dist;
+    // lastHeight = h;
+    // lastY = p.y;
+
+    // rayMarchingStep = voxel.dist;
+    // dist += rayMarchingStep;
+    // voxel.dist = dist;
+  }
+
+  // vec3 normal = calcNormal(rayOrigin + rayDirection * dist);
+  // voxel.color *= 1. + dot(normal, normalize(vec3(cos(uTime * 100.), cos(uTime * 100.), sin(uTime * 100.))));
+
+  return voxel;
+}
+
+// bool baldsjf( const vec3 & ro, const vec3 & rd, float & resT )
+// {
+//     float step = .01;
+//     const float mint = 0.001f;
+//     const float maxt = 10.0f;
+//     float lh = 0.0f;
+//     float ly = 0.0f;
+//     for( float t = mint; t < maxt; t += step )
+//     {
+//         const vec3  p = ro + rd*t;
+//         const float h = f( p.xz );
+//         if( p.y < h )
+//         {
+//             // interpolate the intersection distance
+//             resT = t - dt + dt*(lh-ly)/(p.y-ly-h+lh);
+//             return true;
+//         }
+//         // allow the error to be proportinal to the distance
+//         step = 0.01 * t;
+//         lh = h;
+//         ly = p.y;
+//     }
+//     return false;
+// }
+
+// vec2 rayMarch(vec3 rayOrigin, vec3 rayDirirection, float maxDistance, float precision) {
+//   float latest = precision * 2.0;
+//   float dist   = 0.0;
+//   float type   = -1.0;
+//   vec2  result    = vec2(-1.0, -1.0);
+//
+//   for (int i = 0; i < 90; i++) {
+//     if (latest < precision || dist > maxDistance) break;
+//
+//     vec2 result = map(rayOrigin + rayDir * dist);
+//
+//     latest = result.x;
+//     type   = result.y;
+//     dist  += latest;
+//   }
+//
+//   if (dist < maxDistance) {
+//     result = vec2(dist, type);
+//   }
+//
+//   return result;
+// }
 
 void main()
 {
@@ -139,7 +228,7 @@ void main()
   vec3 rayOrigin = -( uCamera.modelViewMatrix[3].xyz ) * mat3( uCamera.modelViewMatrix );
   vec3 rayDirection = normalize(vec3(position.x * fovScaleY * aspect, position.y * fovScaleY, -1.0) * mat3( uCamera.modelViewMatrix ));
 
-  Voxel voxel = rayMarch(rayOrigin, rayDirection);
+  Voxel voxel = rayMarchTerrain(rayOrigin, rayDirection);
 
   gl_FragColor = vec4(voxel.color.rgb, 1.);
   // gl_FragColor = texture2D(uTexture, position);
