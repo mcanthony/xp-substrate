@@ -136,13 +136,12 @@ Voxel rayMarchTerrain(vec3 rayOrigin, vec3 rayDirection)
 
   float dist = 0.;
 
-  const float steps = 200.;
-  float step = uCamera.far / steps;
+  const float steps = 400.;
+  // const float step = pow(uCamera.far, 1./steps);
+  const float step = 1.0789723114;
 
   for(float i = 0.; i < steps; i++) {
-
-    dist += step;
-
+    dist = 250. + pow(step, i);
     vec3 p = rayOrigin + rayDirection * dist;
     float height = height(p);
 
@@ -154,8 +153,8 @@ Voxel rayMarchTerrain(vec3 rayOrigin, vec3 rayDirection)
     }
 
     // step = 0.01 * dist;
-    // lastHeight = h;
-    // lastY = p.y;
+    lastHeight = height;
+    lastY = p.y;
 
     // rayMarchingStep = voxel.dist;
     // dist += rayMarchingStep;
