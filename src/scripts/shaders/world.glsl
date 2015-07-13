@@ -136,16 +136,15 @@ Voxel rayMarchTerrain(vec3 rayOrigin, vec3 rayDirection)
 
   float dist = 0.;
 
-  float steps = 1000.;
+  float steps = 200.;
   float step = pow(steps, 1./steps);
   // const float step = 1.0789723114;
 
   float distToPlane = -dot(rayOrigin, vec3(0., 1., 0.)) / dot(rayDirection, vec3(0., 1., 0.));
 
-  dist = distToPlane - steps;
 
-  for(float i = 0.; i < 1000.; i++) {
-    dist = i;
+  for(float i = 0.; i < 200.; i++) {
+    dist = distToPlane - steps + i;
     // dist = pow(step, i);
     vec3 p = rayOrigin + rayDirection * dist;
     float height = height(p);
@@ -153,7 +152,7 @@ Voxel rayMarchTerrain(vec3 rayOrigin, vec3 rayDirection)
     if(p.y < height) {
         // interpolate the intersection distance
         // resT = t - dt + dt * (lastHeight - lastY) / (p.y - lastY - h + lastHeight);
-        voxel.color = vec4(vec3(p.y / scale), 1.0);
+        // voxel.color = vec4(vec3(p.y / scale), 1.0);
         break;
     }
 
