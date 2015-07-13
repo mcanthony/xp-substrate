@@ -152,7 +152,7 @@ Voxel rayMarchTerrain(vec3 rayOrigin, vec3 rayDirection)
     if(p.y < height) {
         // interpolate the intersection distance
         // resT = t - dt + dt * (lastHeight - lastY) / (p.y - lastY - h + lastHeight);
-        // voxel.color = vec4(vec3(p.y / scale), 1.0);
+        voxel.color = vec4(vec3(p.y / scale), 1.0);
         break;
     }
 
