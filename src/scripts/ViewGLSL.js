@@ -104,7 +104,7 @@ export default class ViewGLSL extends GLSLView{
     this.camera.position.x += (this.pointer.normalized.x * 2 - 1) * 10;
 
     this.camera.updateMatrixWorld();
-    this.camera.matrixWorldInverse.getInverse( this.camera.matrixWorld );
+    this.camera.matrixWorldInverse.getInverse(this.camera.matrixWorld);
 
     gl.uniform1f(gl.getUniformLocation(this.program, "uTime"), this.time);
     gl.uniformMatrix4fv(gl.getUniformLocation(this.program, "uCamera.modelViewMatrix"), false, this.camera.matrixWorldInverse.elements);
