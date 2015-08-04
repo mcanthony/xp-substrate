@@ -17,6 +17,12 @@
   "dependencies": {
     "webcomponentsjs": "^0.5.1",
     "dlib": "dmmn/dlib",
-    "threejs": "*"
+    "threejs": "*",
+    "gl-mat4": "stackgl/gl-mat4#~1.1.4"
+  },
+  "overrides": {
+    "gl-mat4": {
+      "main": "index.js"
+    }
   }
 }

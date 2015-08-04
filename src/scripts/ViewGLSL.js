@@ -1,4 +1,4 @@
-import THREE from "THREE";
+import Matrix4 from "gl-mat4";
 
 import GLSLView from "dlib/webgl/GLSLView";
 import Pointer from "dlib/input/Pointer";
@@ -31,17 +31,22 @@ export default class ViewGLSL extends GLSLView{
     this.textureCanvas.style.top = "0px";
     // document.body.appendChild(this.textureCanvas);
 
-    this.camera = new THREE.PerspectiveCamera( 45, this.canvas.width / this.canvas.height, 1, 2000 );
-    this.camera.position.set(0, 200, 0);
-    this.camera.rotation.x = -Math.PI * .15;
-
-    // this.controls = new THREE.TrackballControls(this.camera);
+    this.camera = {
+      fov: Math.PI / 4,
+      aspect: this.canvas.width / this.canvas.height,
+      near: 1,
+      far: 2000,
+      matrix: Matrix4.create(),
+      matrixInverse: Matrix4.create()
+    };
+    Matrix4.translate(this.camera.matrix, this.camera.matrix, [0, 200, 0]);
+    Matrix4.rotateX(this.camera.matrix, this.camera.matrix, -Math.PI * .15);
+    Matrix4.invert(this.camera.matrixInverse, this.camera.matrix);
 
     this.time = 0;
 
     let gl = this.gl;
     gl.uniform2f(gl.getUniformLocation(this.program, "uResolution"), this.canvas.width, this.canvas.height);
-
     gl.uniform1f(gl.getUniformLocation(this.program, "uCamera.near"), this.camera.near);
     gl.uniform1f(gl.getUniformLocation(this.program, "uCamera.far"), this.camera.far);
     gl.uniform1f(gl.getUniformLocation(this.program, "uCamera.fov"), this.camera.fov);
@@ -100,14 +105,13 @@ export default class ViewGLSL extends GLSLView{
 
     this.time += 0.001;
 
-    this.camera.position.z -= (1 - this.pointer.normalized.y) * 10;
-    this.camera.position.x += (this.pointer.normalized.x * 2 - 1) * 10;
+    this.camera.matrix[12] += (this.pointer.normalized.x * 2 - 1) * 10;
+    this.camera.matrix[14] -= (1 - this.pointer.normalized.y) * 10;
 
-    this.camera.updateMatrixWorld();
-    this.camera.matrixWorldInverse.getInverse(this.camera.matrixWorld);
+    Matrix4.invert(this.camera.matrixInverse, this.camera.matrix);
 
     gl.uniform1f(gl.getUniformLocation(this.program, "uTime"), this.time);
-    gl.uniformMatrix4fv(gl.getUniformLocation(this.program, "uCamera.modelViewMatrix"), false, this.camera.matrixWorldInverse.elements);
+    gl.uniformMatrix4fv(gl.getUniformLocation(this.program, "uCamera.modelViewMatrix"), false, this.camera.matrixInverse);
 
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.textureCanvas);
     super.update();

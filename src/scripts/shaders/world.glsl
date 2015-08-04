@@ -221,7 +221,7 @@ Voxel rayMarchTerrain(vec3 rayOrigin, vec3 rayDirection)
 
 void main()
 {
-  float fovScaleY = tan((uCamera.fov / 180.0) * PI * .5);
+  float fovScaleY = tan(uCamera.fov * .5);
   float aspect = uResolution.x / uResolution.y;
 
   vec2 position = ( gl_FragCoord.xy / uResolution.xy ) * 2. - 1.;
@@ -231,7 +231,7 @@ void main()
   vec3 rayOrigin = -( uCamera.modelViewMatrix[3].xyz ) * mat3( uCamera.modelViewMatrix );
   vec3 rayDirection = normalize(vec3(position.x * fovScaleY * aspect, position.y * fovScaleY, -1.0) * mat3( uCamera.modelViewMatrix ));
 
-  Voxel voxel = rayMarchTerrain(rayOrigin, rayDirection);
+  Voxel voxel = rayMarch(rayOrigin, rayDirection);
 
   gl_FragColor = vec4(voxel.color.rgb, 1.);
   // gl_FragColor = texture2D(uTexture, position);
