@@ -1,8 +1,8 @@
 const glslify = require("glslify");
 
 import LoopElement from "dlib/dom/LoopElement";
-import SubstrateSystem from "dlib/substrate/SubstrateSystem";
-import SubstrateDebugRenderer from "dlib/substrate/SubstrateDebugRenderer";
+import SubstrateSystem from "dlib/extras/substrate/SubstrateSystem";
+import SubstrateDebugRenderer from "dlib/extras/substrate/SubstrateDebugRenderer";
 import Edge from "dlib/math/Edge";
 import Polygon from "dlib/math/Polygon";
 
