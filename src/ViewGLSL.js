@@ -1,7 +1,6 @@
-import Matrix4 from "gl-mat4";
-
-import GLSLView from "dlib/webgl/GLSLView";
-import Pointer from "dlib/input/Pointer";
+import GLSLView from "dlib/webgl/GLSLView.js";
+import Matrix4 from "dlib/math/Matrix4.js";
+import Pointer from "dlib/input/Pointer.js";
 
 export default class ViewGLSL extends GLSLView{
   constructor (canvas, substrateSystem, fragmentShaderStr) {
@@ -36,12 +35,11 @@ export default class ViewGLSL extends GLSLView{
       aspect: this.canvas.width / this.canvas.height,
       near: 1,
       far: 2000,
-      matrix: Matrix4.create(),
-      matrixInverse: Matrix4.create()
+      matrix: new Matrix4(),
+      matrixInverse: new Matrix4()
     };
-    Matrix4.translate(this.camera.matrix, this.camera.matrix, [0, 200, 0]);
-    Matrix4.rotateX(this.camera.matrix, this.camera.matrix, -Math.PI * .15);
-    Matrix4.invert(this.camera.matrixInverse, this.camera.matrix);
+    this.camera.matrix.translate([0, 150, 0]);
+    this.camera.matrix.rotateX(-Math.PI * .1);
 
     this.time = 0;
 
@@ -105,13 +103,13 @@ export default class ViewGLSL extends GLSLView{
 
     this.time += 0.001;
 
-    this.camera.matrix[12] += (this.pointer.normalized.x * 2 - 1) * 10;
-    this.camera.matrix[14] -= (1 - this.pointer.normalized.y) * 10;
+    this.camera.matrix.components[12] += (this.pointer.normalized.x * 2 - 1) * 10;
+    this.camera.matrix.components[14] -= (1 - this.pointer.normalized.y) * 10;
 
-    Matrix4.invert(this.camera.matrixInverse, this.camera.matrix);
+    this.camera.matrixInverse.invert(this.camera.matrix);
 
     gl.uniform1f(gl.getUniformLocation(this.program, "uTime"), this.time);
-    gl.uniformMatrix4fv(gl.getUniformLocation(this.program, "uCamera.modelViewMatrix"), false, this.camera.matrixInverse);
+    gl.uniformMatrix4fv(gl.getUniformLocation(this.program, "uCamera.modelViewMatrix"), false, this.camera.matrixInverse.components);
 
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.textureCanvas);
     super.update();

@@ -1,13 +1,17 @@
-const glslify = require("glslify");
+import SHADER from "./shaders/world.glsl!text";
 
-import LoopElement from "dlib/dom/LoopElement";
-import SubstrateSystem from "dlib/extras/substrate/SubstrateSystem";
-import SubstrateDebugRenderer from "dlib/extras/substrate/SubstrateDebugRenderer";
-import Edge from "dlib/math/Edge";
-import Polygon from "dlib/math/Polygon";
+import LoopElement from "dlib/dom/LoopElement.js";
+import SubstrateSystem from "dlib/extras/substrate/SubstrateSystem.js";
+import SubstrateDebugRenderer from "dlib/extras/substrate/SubstrateDebugRenderer.js";
+import Edge from "dlib/math/Edge.js";
+import Polygon from "dlib/math/Polygon.js";
 
-import ViewThree from "./ViewThree";
-import ViewGLSL from "./ViewGLSL";
+import templateContent from "./template.html!text";
+let template = document.createElement("template");
+template.innerHTML = templateContent;
+
+// import ViewThree from "./ViewThree.js";
+import ViewGLSL from "./ViewGLSL.js";
 
 class XPSubstrateElement extends LoopElement {
 
@@ -31,7 +35,7 @@ class XPSubstrateElement extends LoopElement {
     });
 
     // this.view = new ViewThree(this.canvas, this.canvasDebug);
-    this.view = new ViewGLSL(this.canvas, this.substrateSystem, glslify("./shaders/world.glsl"));
+    this.view = new ViewGLSL(this.canvas, this.substrateSystem, SHADER);
 
     this.substrateSystem.polygonAddedCallback = this.polygonAdded.bind(this);
 
@@ -80,4 +84,4 @@ class XPSubstrateElement extends LoopElement {
   }
 }
 
-XPSubstrateElement.register("xp-substrate", document.currentScript.ownerDocument.querySelector("template"));
+XPSubstrateElement.register("xp-substrate", template);

@@ -4,8 +4,7 @@
   "description": "Substrate experiment",
   "main": "index.js",
   "scripts": {
-    "start": "dbuild serve --serverDir=.",
-    "polyfill": "dbuild polyfill --outputDir=. PointerEvents"
+    "start": "dbld serve"
   },
   "repository": {
     "type": "git",
@@ -18,24 +17,13 @@
   },
   "homepage": "https://github.com/dmmn/xp-substrate",
   "dependencies": {
-    "babelify": "^6.1.2",
-    "browserify-shim": "^3.8.9",
-    "dbuild": "git://github.com/dmmn/dbuild.git",
-    "debowerify": "^1.3.1",
-    "glslify": "^2.1.2"
+    "babel-core": "^5.8.23",
+    "dlib": "github:dmmn/dlib",
+    "plugin-text": "github:dmmn/plugin-text",
+    "systemjs": "^0.18.17",
+    "webcomponents.js": "^0.7.2"
   },
-  "browserify": {
-    "transform": [
-      "babelify",
-      "browserify-shim",
-      "debowerify",
-      "glslify"
-    ]
-  },
-  "babelify": {
-    "loose": "all"
-  },
-  "browserify-shim": {
-    "THREE": "global:THREE"
+  "devDependencies": {
+    "dbld": "github:dmmn/dbld"
   }
 }
