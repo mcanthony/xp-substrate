@@ -1,9 +1,9 @@
 <style>
-  :host{
+  :host {
     display:block;
     position: relative;
   }
-  canvas {
+  :host canvas {
     position: absolute;
     top: 0;
     left: 0;
@@ -11,7 +11,7 @@
     height: 100%;
     image-rendering: pixelated
   }
-  canvas#debug {
+  :host canvas#debug {
     visibility: hidden;
   }
 </style>

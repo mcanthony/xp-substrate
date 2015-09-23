@@ -19,21 +19,16 @@
       }
     </style>
 
-    <script src="node_modules/webcomponents.js/webcomponents.min.js"></script>
-    <script src="node_modules/systemjs/dist/system.js"></script>
+    <script src="node_modules/systemjs/dist/system.src.js"></script>
     <script type="text/javascript">
       System.config({
         "transpiler": "babel",
         "map": {
           "babel": "node_modules/babel-core/browser.js",
+          "webcomponents.js": "node_modules/webcomponents.js/webcomponents.js",
           "dlib": "node_modules/dlib",
           "text": "node_modules/plugin-text/text.js",
           "xp-substrate": "src/index.js"
-        },
-        "meta": {
-          "**/*.html": {
-            loader: "text"
-          }
         }
       });
       System.import("xp-substrate");

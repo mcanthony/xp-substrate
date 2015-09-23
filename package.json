@@ -4,7 +4,7 @@
   "description": "Substrate experiment",
   "main": "index.js",
   "scripts": {
-    "start": "dbld serve"
+    "start": "browser-sync start --files \"src/**/*\" --server"
   },
   "repository": {
     "type": "git",
@@ -17,13 +17,13 @@
   },
   "homepage": "https://github.com/dmmn/xp-substrate",
   "dependencies": {
-    "babel-core": "^5.8.23",
-    "dlib": "github:dmmn/dlib",
-    "plugin-text": "github:dmmn/plugin-text",
+    "babel-core": "^5.8.24",
+    "dlib": "dmmn/dlib",
+    "plugin-text": "dmmn/plugin-text",
     "systemjs": "^0.18.17",
     "webcomponents.js": "^0.7.2"
   },
   "devDependencies": {
-    "dbld": "github:dmmn/dbld"
+    "browser-sync": "^2.9.3"
   }
 }

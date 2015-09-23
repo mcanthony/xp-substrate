@@ -17,8 +17,8 @@ class XPSubstrateElement extends LoopElement {
 
   createdCallback() {
     super.createdCallback();
-
     this.canvas = this.shadowRoot.querySelector("canvas#main");
+
     this.canvas.width = this.offsetWidth;
     this.canvas.height = this.offsetHeight;
 
